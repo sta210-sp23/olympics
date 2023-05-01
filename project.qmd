@@ -1,19 +1,26 @@
 ---
-title: "Project"
-author: "Noah O and Tamya D"
-format: html
+title: "Winning Characteristics in the Olympics"
+author: "Noah Obuya and Tamya Davidson"
+format: pdf
 editor: visual
 ---
 
 ## Read Data and Packages
 
-```{r}
+```{r laod-packages, warning = FALSE, message = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=25)}
+
 library(tidyverse)
+library(tidymodels)
+library(formatR)
+library(MASS)
+library(nnet)
+library(car)
+library(lme4)
 ```
 
-```{r}
+```{r read-in-data, warning = FALSE, message = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=25)}
+
 olympics <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-07-27/olympics.csv')
 
 ```
 
-## 
