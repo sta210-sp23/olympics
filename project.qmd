@@ -11,9 +11,11 @@ editor: visual
 
 library(tidyverse)
 library(tidymodels)
+install.packages("formatR")
 library(formatR)
 library(MASS)
 library(nnet)
+install.packages("car")
 library(car)
 library(lme4)
 ```
@@ -24,3 +26,14 @@ olympics <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/t
 
 ```
 
+## Brainstorm 
+
+What variable in our model is most influential (or most accurately) able to predict someone winning a gold medal?
+
+What country has won the most gold medals?
+
+If someone doesn't win a gold medal, are they more likely to win a silver or bronze medal?
+
+Do men or women win more gold medals , and are the influential variables the same for them?
+
+*Are countries with warmer climates more prone to winning a gold medal during the summer olympics?* Would have to find some data classifying a country as a warm country.
