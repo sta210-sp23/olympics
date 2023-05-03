@@ -49,3 +49,22 @@ olympics %>%
   filter(n > 100)
 # the amount of medals that countries that have won more than 100 have
 ```
+
+```{r}
+test <- olympics %>%
+  mutate(old = if_else(age > 25, "Old", "Young")) %>%  
+  filter(year == 2004 | year == 2008 | year == 2012 | year == 2016)%>%  
+  filter(!is.na(medal)) %>%
+  filter(medal == "Gold") %>%
+  count(noc) %>%
+  filter(n > 50)
+
+
+ggplot(test, mapping = aes(x = n, y = noc)) + 
+  geom_point()
+```
+
+```{r}
+ggplot(olympics , mapping = aes(x = event, y = sex, color = medal)) + 
+  geom_point()
+```
