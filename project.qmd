@@ -65,6 +65,10 @@ ggplot(test, mapping = aes(x = n, y = noc)) +
 ```
 
 ```{r}
+summary(olympics)
+```
+
+```{r}
 ggplot(olympics , mapping = aes(x = event, y = sex, color = medal)) + 
   geom_point()
 ```
