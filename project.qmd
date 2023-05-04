@@ -24,20 +24,6 @@ olympics <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/t
 
 ```
 
-## Brainstorm
-
-What variable in our model is most influential (or most accurately) able to predict someone winning a gold medal?
-
-What country has won the most gold medals?
-
-If someone doesn't win a gold medal, are they more likely to win a silver or bronze medal?
-
-Do men or women win more gold medals , and are the influential variables the same for them?
-
-*Are countries with warmer climates more prone to winning a gold medal during the summer olympics?* Would have to find some data classifying a country as a warm country.
-
-## Filtering Data
-
 ```{r new data sets, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 
 olympics <- olympics %>% 
@@ -71,9 +57,11 @@ test <- olympics %>%
 
 ## Research Question
 
-## Variables of Interest
+**What are the most influential characteristics (between sex, age, height, weight, and country) when it comes to the Summer Olympics, and do these characteristics change over the course of a decade?**
 
-## Data Cleaning
+We chose Olympics data from TidyTuesday's github repository (https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-07-27/readme.md). The data were collected by scraping www.sports-reference.com and was created in May 2018. The data contains 271,116 observations of 15 variables. The variables of interest in our research include sex, age, height, weight, noc (country), year, season, and medals (Gold, Silver, Bronze). Based on these variables, we will answer the question of what are the most influential variables that influence an athlete receiving a gold medal , and do these variables change over time. From the data set we will only observe the more recent Olympic games (including the years 2004, 2008, 2012, 2016), and we will analyze our research question through subsets of the data. There are many NA values corresponding to medals, and because this is our variable of interest we will drop all NA values corresponding to medals. After doing this we are left with a case study of 39,783 observations of 15 variables. The motivation behind this project is to analyze what athletes can do to better prepare for the Olympic games, and see which factors are more influential than others.
+
+## Variables of Interest
 
 ## Exploratory Data Analysis
 
