@@ -5,9 +5,7 @@ format: pdf
 editor: visual
 ---
 
-## Read Data and Packages
-
-```{r laod-packages, warning = FALSE, message = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=25)}
+```{r load-packages, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 
 library(tidyverse)
 library(tidymodels)
@@ -20,7 +18,7 @@ library(car)
 library(lme4)
 ```
 
-```{r read-in-data, warning = FALSE, message = FALSE, tidy = TRUE, tidy.opts=list(width.cutoff=25)}
+```{r read-in-data, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 
 olympics <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-07-27/olympics.csv')
 
@@ -40,7 +38,7 @@ Do men or women win more gold medals , and are the influential variables the sam
 
 ## Filtering Data
 
-```{r}
+```{r new data sets, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 
 olympics <- olympics %>% 
  na.omit
@@ -59,7 +57,7 @@ olympics16 <- olympics %>%
   
 ```
 
-```{r}
+```{r playing around, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 test <- olympics %>%
   mutate(old = if_else(age > 25, "Old", "Young")) %>%  
   filter(year == 2004 | year == 2008 | year == 2012 | year == 2016)%>%  
@@ -67,21 +65,42 @@ test <- olympics %>%
   filter(medal == "Gold") %>%
   count(noc) %>%
   filter(n > 50)
-
-
-ggplot(test, mapping = aes(x = n, y = noc)) + 
-  geom_point()
 ```
 
-```{r}
-summary(olympics)
-```
+# Introduction and Data
 
-```{r}
-summary(olympics04)
-```
+## Research Question
 
-```{r}
-ggplot(olympics , mapping = aes(x = event, y = sex, color = medal)) + 
-  geom_point()
-```
+## Variables of Interest
+
+## Data Cleaning
+
+## Exploratory Data Analysis
+
+# Methodology
+
+## Why We Chose an Ordinal Model
+
+## Model Selection Process
+
+## Variable Interactions and Transformations
+
+## Model Conditions and Diagnostics
+
+# Results
+
+## Final Model
+
+## Key Results and Interpretations
+
+# Discussion
+
+## Revisiting the Research Question
+
+## Hypothesis Test
+
+## Limitations
+
+## Ideas for Future Work
+
+# Appendix
