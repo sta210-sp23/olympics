@@ -9,11 +9,9 @@ editor: visual
 
 library(tidyverse)
 library(tidymodels)
-install.packages("formatR")
 library(formatR)
 library(MASS)
 library(nnet)
-install.packages("car")
 library(car)
 library(lme4)
 library(glmnet)
@@ -46,16 +44,6 @@ olympics16 <- olympics %>%
   
 ```
 
-```{r playing around, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
-test <- olympics %>%
-  mutate(old = if_else(age > 25, "Old", "Young")) %>%  
-  filter(year == 2004 | year == 2008 | year == 2012 | year == 2016)%>%  
-  filter(!is.na(medal)) %>%
-  filter(medal == "Gold") %>%
-  count(noc) %>%
-  filter(n > 50)
-```
-
 # Introduction and Data
 
 ## Research Question
@@ -68,26 +56,26 @@ We chose Olympics data from TidyTuesday's github repository (https://github.com/
 
 ## Exploratory Data Analysis
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 olympics04 %>%
   count(medal) %>%
   mutate(per = n/sum(n)) %>%
   ggplot()
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 olympics08 %>%
   count(medal)%>%
   mutate(per = n/sum(n))
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 olympics12 %>%
   count(medal) %>%
   mutate(per = n/sum(n))
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 olympics16 %>%
   count(medal) %>%
   mutate(per = n/sum(n))
@@ -102,9 +90,7 @@ In 2012, the number of bronze medals handed out to individuals was 669 which was
 
 In 2016, the number of bronze medals handed out to individuals was 700 which was 34.8% of the total medals, the number of silver medals was 652 which was 32.3% of the total medals, and the number of gold medals was 662 which was 32.8% of the total medals.
 
-BoxPlot of Physical Characteristics (Mean Weight by Gender) -\>
-
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 ggplot(olympics , mapping = aes(x = weight , y = sex )) + 
   geom_boxplot() + 
   theme_minimal() + 
@@ -113,7 +99,7 @@ ggplot(olympics , mapping = aes(x = weight , y = sex )) +
 
 As we can see from the boxplots above, the distribution of weight for men and women athletes competing in the olympics are both skewed to the right, while it appears that the men are skewed heavier. We were interested in the one female athlete who is considered an outlier because her weight is above 150. We have found the athlete to be Olha Vasylivna Korobka who actually got a silver medal in the 2008 summer games in weight lifting. (Code shown below).
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 olympics %>%
   filter(sex == "F") %>%
   filter(weight > 150)
@@ -121,7 +107,7 @@ olympics %>%
 
 Height vs Sex BoxPlots
 
-```{r}
+```{rwarning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 ggplot(olympics , mapping = aes(x =height , y = sex )) + 
   geom_boxplot() + 
   theme_minimal() + 
@@ -138,12 +124,12 @@ Now that we have analyzed the data and got some idea of the distribution of spec
 
 First we will fit a logistic regression model that predicts the probability of receiving a gold medal (for the purpose of this model, we will use the goldMedal? column that gives us a 1 if someone received a gold medal for their event, and gives us a 0 if someone did not receive a gold medal (they received either gold or silver) this is due to the characteristics of logistic regression and how it works best when predicting a binary outcome.)
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 olympics_goldMedal <- olympics %>%
   mutate(goldMedal = if_else(medal == "Gold", 1, 0)) 
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
  logit_mod <- glm(goldMedal ~ sex  + age + height +  weight + noc, data = olympics_goldMedal, family = "binomial"(link = "logit")) 
    tidy(logit_mod) %>%
      mutate(estimate = round(estimate, 9))
@@ -153,7 +139,7 @@ The expected log odds of someone achieving a gold medal if their sex is male is 
 
 ## Ordinal Regression
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 olympics_ord <- 
   olympics%>%
   mutate(medals = case_when(
@@ -192,12 +178,12 @@ best_lambda
 plot(m_lasso_cv)
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 m_best <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 m_best$beta
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 library(leaps)
 m_all_noc <- regsubsets(medals ~ sex  + age + height +  weight + noc,
                   data = olympics_ord, 
@@ -206,11 +192,11 @@ m_all_noc
 
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 summary(m_all_noc)
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 m_all <- regsubsets(medals ~ sex  + age + height +  weight,
                   data = olympics_ord, 
                   nbest = 1, nvmax = 5, really.big = T)
@@ -218,7 +204,7 @@ m_all
 
 ```
 
-```{r}
+```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
 summary(m_all)
 ```
 
