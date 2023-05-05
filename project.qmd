@@ -18,13 +18,13 @@ library(glmnet)
 
 ```
 
-```{r read-in-data,echo=FALSE}
+```{r read-in-data,results = FALSE}
 
 olympics <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-07-27/olympics.csv')
 
 ```
 
-```{r,echo=FALSE}
+```{r}
 
 olympics <- olympics %>% 
  na.omit
@@ -55,14 +55,14 @@ We chose Olympics data from TidyTuesday's github repository (https://github.com/
 
 ## Exploratory Data Analysis
 
-```{r,echo=FALSE}
+```{r}
 olympics04 %>%
   count(medal) %>%
   mutate(per = n/sum(n)) %>%
   ggplot()
 ```
 
-```{r,echo=FALSE}
+```{r}
 olympics08 %>%
   count(medal)%>%
   mutate(per = n/sum(n))
@@ -153,7 +153,7 @@ tidy(ordMod) %>%
   mutate(estimate = round(estimate , 9))
 ```
 
-```{r,echo=FALSE}
+```{r,results = FALSE}
 exp(coef(ordMod))
 ```
 
@@ -161,14 +161,14 @@ exp(coef(ordMod))
 
 ## Variable Selection
 
-```{r,echo=FALSE}
+```{r,results = FALSE}
 y <- olympics_ord$medals
 x <- model.matrix(medals ~ sex  + age + height +  weight + noc ,
                   data = olympics_ord)
 m_lasso_cv <- cv.glmnet(x, y, alpha = 1)
 ```
 
-```{r,echo=FALSE}
+```{r}
 best_lambda <- m_lasso_cv$lambda.min
 best_lambda
 ```
@@ -182,7 +182,7 @@ m_best <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 m_best$beta
 ```
 
-```{r,echo=FALSE}
+```{r,results = FALSE}
 library(leaps)
 m_all_noc <- regsubsets(medals ~ sex  + age + height +  weight + noc,
                   data = olympics_ord, 
@@ -191,7 +191,7 @@ m_all_noc
 
 ```
 
-```{r,echo=FALSE}
+```{r,results = FALSE}
 summary(m_all_noc)
 ```
 
