@@ -5,8 +5,7 @@ format: pdf
 editor: visual
 ---
 
-```{r load-packages, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
-
+```{r load-packages}
 library(tidyverse)
 library(tidymodels)
 library(formatR)
@@ -19,13 +18,13 @@ library(glmnet)
 
 ```
 
-```{r read-in-data, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r read-in-data,echo=FALSE}
 
 olympics <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-07-27/olympics.csv')
 
 ```
 
-```{r new data sets, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r,echo=FALSE}
 
 olympics <- olympics %>% 
  na.omit
@@ -56,26 +55,26 @@ We chose Olympics data from TidyTuesday's github repository (https://github.com/
 
 ## Exploratory Data Analysis
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r,echo=FALSE}
 olympics04 %>%
   count(medal) %>%
   mutate(per = n/sum(n)) %>%
   ggplot()
 ```
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r,echo=FALSE}
 olympics08 %>%
   count(medal)%>%
   mutate(per = n/sum(n))
 ```
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r}
 olympics12 %>%
   count(medal) %>%
   mutate(per = n/sum(n))
 ```
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r}
 olympics16 %>%
   count(medal) %>%
   mutate(per = n/sum(n))
@@ -90,7 +89,7 @@ In 2012, the number of bronze medals handed out to individuals was 669 which was
 
 In 2016, the number of bronze medals handed out to individuals was 700 which was 34.8% of the total medals, the number of silver medals was 652 which was 32.3% of the total medals, and the number of gold medals was 662 which was 32.8% of the total medals.
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r}
 ggplot(olympics , mapping = aes(x = weight , y = sex )) + 
   geom_boxplot() + 
   theme_minimal() + 
@@ -99,7 +98,7 @@ ggplot(olympics , mapping = aes(x = weight , y = sex )) +
 
 As we can see from the boxplots above, the distribution of weight for men and women athletes competing in the olympics are both skewed to the right, while it appears that the men are skewed heavier. We were interested in the one female athlete who is considered an outlier because her weight is above 150. We have found the athlete to be Olha Vasylivna Korobka who actually got a silver medal in the 2008 summer games in weight lifting. (Code shown below).
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r}
 olympics %>%
   filter(sex == "F") %>%
   filter(weight > 150)
@@ -107,7 +106,7 @@ olympics %>%
 
 Height vs Sex BoxPlots
 
-```{rwarning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r}
 ggplot(olympics , mapping = aes(x =height , y = sex )) + 
   geom_boxplot() + 
   theme_minimal() + 
@@ -124,12 +123,12 @@ Now that we have analyzed the data and got some idea of the distribution of spec
 
 First we will fit a logistic regression model that predicts the probability of receiving a gold medal (for the purpose of this model, we will use the goldMedal? column that gives us a 1 if someone received a gold medal for their event, and gives us a 0 if someone did not receive a gold medal (they received either gold or silver) this is due to the characteristics of logistic regression and how it works best when predicting a binary outcome.)
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r,echo=FALSE}
 olympics_goldMedal <- olympics %>%
   mutate(goldMedal = if_else(medal == "Gold", 1, 0)) 
 ```
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r,echo=FALSE}
  logit_mod <- glm(goldMedal ~ sex  + age + height +  weight + noc, data = olympics_goldMedal, family = "binomial"(link = "logit")) 
    tidy(logit_mod) %>%
      mutate(estimate = round(estimate, 9))
@@ -139,7 +138,7 @@ The expected log odds of someone achieving a gold medal if their sex is male is 
 
 ## Ordinal Regression
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r,echo=FALSE}
 olympics_ord <- 
   olympics%>%
   mutate(medals = case_when(
@@ -154,7 +153,7 @@ tidy(ordMod) %>%
   mutate(estimate = round(estimate , 9))
 ```
 
-```{r}
+```{r,echo=FALSE}
 exp(coef(ordMod))
 ```
 
@@ -162,14 +161,14 @@ exp(coef(ordMod))
 
 ## Variable Selection
 
-```{r}
+```{r,echo=FALSE}
 y <- olympics_ord$medals
 x <- model.matrix(medals ~ sex  + age + height +  weight + noc ,
                   data = olympics_ord)
 m_lasso_cv <- cv.glmnet(x, y, alpha = 1)
 ```
 
-```{r}
+```{r,echo=FALSE}
 best_lambda <- m_lasso_cv$lambda.min
 best_lambda
 ```
@@ -178,12 +177,12 @@ best_lambda
 plot(m_lasso_cv)
 ```
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r}
 m_best <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 m_best$beta
 ```
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r,echo=FALSE}
 library(leaps)
 m_all_noc <- regsubsets(medals ~ sex  + age + height +  weight + noc,
                   data = olympics_ord, 
@@ -192,11 +191,11 @@ m_all_noc
 
 ```
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r,echo=FALSE}
 summary(m_all_noc)
 ```
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r}
 m_all <- regsubsets(medals ~ sex  + age + height +  weight,
                   data = olympics_ord, 
                   nbest = 1, nvmax = 5, really.big = T)
@@ -204,7 +203,7 @@ m_all
 
 ```
 
-```{r warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
+```{r}
 summary(m_all)
 ```
 
