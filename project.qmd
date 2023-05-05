@@ -47,11 +47,99 @@ olympics16 <- olympics %>%
 
 ## Research Question
 
-**What are the most influential characteristics (between sex, age, height, weight, and country) when it comes to predicting gold medals in the Summer Olympics, and do these characteristics change over the course of a decade?**
+**What are the most influential characteristics (between height and weight
+when it comes to predicting gold medals?
 
-We chose Olympics data from TidyTuesday's github repository (https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-07-27/readme.md). The data were collected by scraping www.sports-reference.com and was created in May 2018. The data contains 271,116 observations of 15 variables. The variables of interest in our research include sex, age, height, weight, noc (country), year, season, and medals (Gold, Silver, Bronze). Based on these variables, we will answer the question of what are the most influential variables that influence an athlete receiving a gold medal , and do these variables change over time. From the data set we will only observe the more recent Olympic games (including the years 2004, 2008, 2012, 2016), and we will analyze our research question through subsets of the data. There are many NA values corresponding to medals, and because this is our variable of interest we will drop all NA values corresponding to medals. After doing this we are left with a case study of 39,783 observations of 15 variables. The motivation behind this project is to analyze what athletes can do to better prepare for the Olympic games, and see which factors are more influential than others.
+The data that we chose was olympics data from TidyTuesday\'s github repository (https://github.com/rfordatascience/tidytuesday/b
+lob/master/data/2021/2021-07-27/readme.md). The dataset was created in 
+May 2018, and the data were collected by scraping www.sports-reference.com.  
+The data contains 271,116 observations of 15 variables. The variables of 
+interest in our research include sex, age, height , weight , noc (country)
+, year , season, and medals (Gold, Silver, Bronze). Based on these variables 
+, we will answer the question of what are the most influential variables that
+influence an athlete receiving a gold medal, and if these variables change 
+over time. From the dataset we will only observe the more recent olympic
+games (including the years 2004, 2008, 2012, 2016). As part of our 
+data-cleaning process, we have created 4 different dataset subsections 
+for each of these years. Additionally, there were many NA values 
+corresponding to medals. Since this is our variable of interest,
+we will drop all NA values corresponding to medals. After doing 
+this we are left with a case study of 39,783 observations of 15 variables. 
+The motivation behind this project is to analyze what 
+athletes can do to better prepare for the Olympic games, and see
+which factors are more influential than others. 
+
+\
 
 ## Variables of Interest
+
+Variables of Interest
+
+Sex - Sex Assigned at Birth of the Olympian
+
+Age - Age of the Olympian in years
+
+Height - Height of the Olympian in centimeters (cm)
+
+Weight - Weight of the Olympian in kilograms (kg)
+
+NOC - Country as assigned by the National Olympic Committee
+
+##  Methodology 
+
+We will be fitting an ordinal model. We are doing this because the outcome 
+variable, Medal, is not only categorical, but ordered. Within the three 
+separate categories of medal, we can assume that an Olympian who received 
+a gold medal has done better than an Olympian who received a silver medal. 
+The same can be said for a silver medal vs. a bronze medal and a gold medal 
+vs. a bronze medal. 
+
+The assumptions of an ordinal model include the following:
+
+1.The dependent variable are ordered
+
+2.One or more of the independent variables are either continuous, 
+categorical or ordinal.
+
+3.There is no multicollinearity.
+
+4.There are proportional odds.
+
+The first two assumptions are already taken care of through the nature of
+our model. It is clear that our dependent variable, Medal, is ordered. We 
+have continuous and categorical independent variables (sex and country
+being categorical, height, weight and age being continuous). For the 
+multicollinearity assumption, we will be examining correlation plots
+between each variable and Variance Inflation Factor (VIF) tests to 
+ensure multicollinearity does not exist. 
+
+In cleaning our dataset, we removed all the NA values corresponding to 
+our variable, Medal. There were NA values corresponding to our Medal 
+variable because data were Missing at Random (MAR). We know that, for
+each event, there can only be three placements: Gold, Silver and Bronze.
+This is our observed data, because we have a variable corresponding to 
+the event. Our missing data are all the NA values for medal that we 
+initially had in our dataset. Therefore our missing data are related 
+to observed data, because we know those who didn\'t receive a medal 
+within their events (NA value) just weren\'t able to place within the
+three placements that are offered for each event.
+
+We fit an ordinal model with no transformations or interactions and
+tested the assumptions to see how it would perform as an initial model; 
+something we could base our improvements off of. This ordinal model 
+included our variables of interest, with Medals as our outcome. We first 
+ran LASSO on this model, selecting important variables from the output
+LASSO gave. Then, we ran all-subset selection on the variables that were
+chosen by our LASSO output. We opted not to use forward selection or 
+backward elimination because we knew our variables were highly correlated,
+which we cover in the discussion of our transformations and interactions.
+
+\
+The predictor variables we are considering for the model are sex, age, 
+height, weight and NOC (country). We considered interactions terms between
+sex \* weight and sex \* height. 
+
+\
 
 ## Exploratory Data Analysis
 
@@ -81,22 +169,41 @@ olympics16 %>%
   
 ```
 
-In 2004, the number of bronze medals handed out to individuals was 676 which was 33.8% of the total medals, the number of silver medals was 660 which was 33% of the total medals , and the number of gold medals was 664 which was 33.2% of the total medals .
+In 2004, the number of bronze medals handed out to individuals was 676 which 
+was 33.8% of the total medals, the number of silver medals was 660 which was 
+33% of the total medals , and the number of gold medals was 664 which was 33.2%
+of the total medals .
 
-In 2008, the number of bronze medals handed out to individuals was 706 which was 34.7% of the total medals , the number of silver medals was 665 which was 32.7% of the total medals, and the number of gold medals was 664 which was 32.6% of the total medals.
+In 2008, the number of bronze medals handed out to individuals was 706 which
+was 34.7% of the total medals , the number of silver medals was 665 which was
+32.7% of the total medals, and the number of gold medals was 664 which was 
+32.6% of the total medals.
 
-In 2012, the number of bronze medals handed out to individuals was 669 which was 35% of the total medals , the number of silver medals was 624 which was 32.6% of the total medals, and the number of gold medals was 622 which was 32.4% of the total medals.
+In 2012, the number of bronze medals handed out to individuals was 669 which
+was 35% of the total medals , the number of silver medals was 624 which was 
+32.6% of the total medals, and the number of gold medals was 622 which was
+32.4% of the total medals.
 
-In 2016, the number of bronze medals handed out to individuals was 700 which was 34.8% of the total medals, the number of silver medals was 652 which was 32.3% of the total medals, and the number of gold medals was 662 which was 32.8% of the total medals.
+In 2016, the number of bronze medals handed out to individuals was 700 which
+was 34.8% of the total medals, the number of silver medals was 652 which was
+32.3% of the total medals, and the number of gold medals was 662 which was 
+32.8% of the total medals.
 
 ```{r}
 ggplot(olympics , mapping = aes(x = weight , y = sex )) + 
   geom_boxplot() + 
   theme_minimal() + 
-  labs(x = "Weight", y = "Sex", title = "Distribution of weights of athletes by sex", subtitle = "Men have a higher median weight than women across all olympic games")
+  labs(x = "Weight", y = "Sex", title = "Distribution of weights of 
+       athletes by sex", subtitle = "Men have a higher median weight 
+       than women across all olympic games")
 ```
 
-As we can see from the boxplots above, the distribution of weight for men and women athletes competing in the olympics are both skewed to the right, while it appears that the men are skewed heavier. We were interested in the one female athlete who is considered an outlier because her weight is above 150. We have found the athlete to be Olha Vasylivna Korobka who actually got a silver medal in the 2008 summer games in weight lifting. (Code shown below).
+As we can see from the boxplots above, the distribution of weight for men and 
+\women athletes competing in the olympics are both skewed to the right, while 
+it appears that the men are skewed heavier. We were interested in the one 
+female athlete who is considered an outlier because her weight is above 150.
+We have found the athlete to be Olha Vasylivna Korobka who actually got a 
+silver medal in the 2008 summer games in weight lifting. (Code shown below).
 
 ```{r}
 olympics %>%
@@ -110,18 +217,35 @@ Height vs Sex BoxPlots
 ggplot(olympics , mapping = aes(x =height , y = sex )) + 
   geom_boxplot() + 
   theme_minimal() + 
-  labs(x = "Height", y = "Sex", title = "Distribution of heights of athletes by sex", subtitle = "Men have a higher median height than women across all olympic games")
+  labs(x = "Height", y = "Sex", title = "Distribution of heights of athletes 
+       by sex", subtitle = "Men have a higher median height than women across
+       all olympic games")
 ```
 
-Similar to the results that we saw in the boxplots comparing distributions of weights between men and women, we can see that men also have a higher median height than women who have completed in the Olympics.
+Similar to the results that we saw in the boxplots comparing distributions of 
+weights between men and women, we can see that men also have a higher median
+height than women who have completed in the Olympics.
 
-*We chose to use all years when analyzing the distribution of heights and weights* because over the course of our time frame (2004 - 2016) there have been many rule changes about allowed and not allowed substances, and analyzing these two variables through all of the years can give us a better idea of distributions.
+*We chose to use all years when analyzing the distribution of heights and
+weights* because over the course of our time frame (2004 - 2016) there have 
+been many rule changes about allowed and not allowed substances, 
+and analyzing these two variables through all of the years can give us 
+a better idea of distributions.
 
-Now that we have analyzed the data and got some idea of the distribution of specific parameters of interest, we are interested in analyzing which variables are the biggest factor in predicting gold medals for Summer Olympic games, and whether or not these variables (and their influence) change over time.
+Now that we have analyzed the data and got some idea of the distribution 
+of specific parameters of interest, we are interested in analyzing which 
+variables are the biggest factor in predicting gold medals for Summer 
+Olympic games, and whether or not these variables (and their influence) 
+change over time.
 
 ## Logistic Regression
 
-First we will fit a logistic regression model that predicts the probability of receiving a gold medal (for the purpose of this model, we will use the goldMedal? column that gives us a 1 if someone received a gold medal for their event, and gives us a 0 if someone did not receive a gold medal (they received either gold or silver) this is due to the characteristics of logistic regression and how it works best when predicting a binary outcome.)
+First we will fit a logistic regression model that predicts the probability
+of receiving a gold medal (for the purpose of this model, we will use the 
+goldMedal? column that gives us a 1 if someone received a gold medal for 
+their event, and gives us a 0 if someone did not receive a gold medal 
+(they received either gold or silver) this is due to the characteristics
+of logistic regression and how it works best when predicting a binary outcome.)
 
 ```{r,echo=FALSE}
 olympics_goldMedal <- olympics %>%
@@ -129,12 +253,24 @@ olympics_goldMedal <- olympics %>%
 ```
 
 ```{r,echo=FALSE}
- logit_mod <- glm(goldMedal ~ sex  + age + height +  weight + noc, data = olympics_goldMedal, family = "binomial"(link = "logit")) 
+ logit_mod <- glm(goldMedal ~ sex  + age + height +  weight + noc, 
+                  data = olympics_goldMedal, family = "binomial"(link = "logit")) 
    tidy(logit_mod) %>%
      mutate(estimate = round(estimate, 9))
 ```
 
-The expected log odds of someone achieving a gold medal if their sex is male is 0.0535 times higher than if someone is a female when holding all other variables constant. For every one year increase in age, the expected log odds of someone achieving a gold medal is expected to increase by .00164 when all other variables are held constant. For every one unit increase in height, we expect the logs odds of someone achieving a gold medal to increase by approximately 0.0020 when all other variables are held constant. . For every one unit increase in weight, we expect the log odds of someone achieving a gold medal to increase by approximately 0.00022 when all other variables are held constant. For each respective noc, the expected log odds of someone achieving a gold medal to \[increase or decrease\] by X when all other variables are held constant.
+The expected log odds of someone achieving a gold medal if their sex is male
+is 0.0535 times higher than if someone is a female when holding all other
+variables constant. For every one year increase in age, the expected log 
+odds of someone achieving a gold medal is expected to increase by .00164 
+when all other variables are held constant. For every one unit increase
+in height, we expect the logs odds of someone achieving a gold medal to 
+increase by approximately 0.0020 when all other variables are held constant.
+. For every one unit increase in weight, we expect the log odds of someone
+achieving a gold medal to increase by approximately 0.00022 when all other
+variables are held constant. For each respective noc, the expected log
+odds of someone achieving a gold medal to \[increase or decrease\] by X 
+when all other variables are held constant.
 
 ## Ordinal Regression
 
@@ -148,7 +284,8 @@ olympics_ord <-
            TRUE ~ 0
   ))
 ordMod <-
-  polr(factor(medals) ~ sex  + age + height +  weight + noc, data = olympics_ord , method = "probit")
+  polr(factor(medals) ~ sex  + age + height +  weight + noc, 
+       data = olympics_ord , method = "probit")
 tidy(ordMod) %>%
   mutate(estimate = round(estimate , 9))
 ```
@@ -177,7 +314,7 @@ best_lambda
 plot(m_lasso_cv)
 ```
 
-```{r}
+```{r, results = FALSE}
 m_best <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 m_best$beta
 ```
@@ -220,3 +357,22 @@ tidy(ordMod_final) %>%
   mutate(estimate = round(estimate , 9))
 
 ```
+
+## Results
+
+LASSO removed weight as a variable and majority of all NOC identifiers (country
+) as variables as well. When we ran our all subset selection on these variables,
+we got back the same data, which removed weight and noc, leaving sex, age and 
+height.
+
+##  Discussion
+
+In summary, we learned that weight does not have an impact on whether an
+Olympian receives a gold medal or not. In addition, we learned that when 
+taking into consideration our variables of interest, sex age and height 
+are the only influential variables when we perform variable selection.\
+For our future work, we could subset this data by years and see if the 
+influence of these variables change over time. Additionally, we could check 
+the variable\'s influence with Cook\'s Distance.
+
+\
