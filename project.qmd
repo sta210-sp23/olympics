@@ -16,6 +16,9 @@ library(nnet)
 install.packages("car")
 library(car)
 library(lme4)
+install.packages("rms",dependencies = TRUE)
+library(rms)
+
 ```
 
 ```{r read-in-data, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
@@ -141,7 +144,7 @@ olympics_goldMedal <- olympics %>%
 ```
 
 ```{r}
- logit_mod <- glm(goldMedal ~ sex  + age + height +  weight + noc, data = olympics_goldMedal, family = "binomial") 
+ logit_mod <- glm(goldMedal ~ sex  + age + height +  weight + noc, data = olympics_goldMedal, family = "binomial"(link = "logit")) 
    tidy(logit_mod) %>%
      mutate(estimate = round(estimate, 9))
 ```
@@ -152,7 +155,7 @@ The expected log odds of someone achieving a gold medal if their sex is male is 
 
 ```{r}
 ordMod <-
-  polr(factor(medal) ~ sex  + age + height +  weight + noc, data = olympics )
+  polr(factor(medal) ~ sex  + age + height +  weight + noc, data = olympics , method = "probit")
 tidy(ordMod) %>%
   mutate(estimate = round(estimate , 9))
 ```
@@ -161,28 +164,6 @@ tidy(ordMod) %>%
 exp(coef(ordMod))
 ```
 
-## Why We Chose an Ordinal Model
+## 
 
-## Model Selection Process
-
-## Variable Interactions and Transformations
-
-## Model Conditions and Diagnostics
-
-# Results
-
-## Final Model
-
-## Key Results and Interpretations
-
-# Discussion
-
-## Revisiting the Research Question
-
-## Hypothesis Test
-
-## Limitations
-
-## Ideas for Future Work
-
-# Appendix
+## 
