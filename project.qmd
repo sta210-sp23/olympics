@@ -16,8 +16,7 @@ library(nnet)
 install.packages("car")
 library(car)
 library(lme4)
-install.packages("rms",dependencies = TRUE)
-library(rms)
+library(glmnet)
 
 ```
 
@@ -154,8 +153,16 @@ The expected log odds of someone achieving a gold medal if their sex is male is 
 ## Ordinal Regression
 
 ```{r}
+olympics_ord <- 
+  olympics%>%
+  mutate(medals = case_when(
+    medal == "Gold"~ 3, 
+                  medal == "Silver"~2, 
+           medal == "Bronze"~1, 
+           TRUE ~ 0
+  ))
 ordMod <-
-  polr(factor(medal) ~ sex  + age + height +  weight + noc, data = olympics , method = "probit")
+  polr(factor(medals) ~ sex  + age + height +  weight + noc, data = olympics_ord , method = "probit")
 tidy(ordMod) %>%
   mutate(estimate = round(estimate , 9))
 ```
@@ -166,4 +173,25 @@ exp(coef(ordMod))
 
 ## 
 
-## 
+## Variable Selection
+
+```{r}
+y <- olympics_ord$medals
+x <- model.matrix(medals ~ sex  + age + height +  weight + noc,
+                  data = olympics_ord)
+m_lasso_cv <- cv.glmnet(x, y, alpha = 1)
+```
+
+```{r}
+best_lambda <- m_lasso_cv$lambda.min
+best_lambda
+```
+
+```{r}
+plot(m_lasso_cv)
+```
+
+```{r}
+m_best <- glmnet(x, y, alpha = 1, lambda = best_lambda)
+m_best$beta
+```
