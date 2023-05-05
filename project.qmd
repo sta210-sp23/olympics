@@ -18,6 +18,7 @@ library(car)
 library(lme4)
 library(glmnet)
 
+
 ```
 
 ```{r read-in-data, warning = FALSE, message = FALSE, tidy = TRUE, echo = FALSE, tidy.opts=list(width.cutoff=25)}
@@ -177,7 +178,7 @@ exp(coef(ordMod))
 
 ```{r}
 y <- olympics_ord$medals
-x <- model.matrix(medals ~ sex  + age + height +  weight + noc,
+x <- model.matrix(medals ~ sex  + age + height +  weight + noc ,
                   data = olympics_ord)
 m_lasso_cv <- cv.glmnet(x, y, alpha = 1)
 ```
@@ -194,4 +195,33 @@ plot(m_lasso_cv)
 ```{r}
 m_best <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 m_best$beta
+```
+
+```{r}
+library(leaps)
+m_all_noc <- regsubsets(medals ~ sex  + age + height +  weight + noc,
+                  data = olympics_ord, 
+                  nbest = 1, nvmax = 5, really.big = T)
+m_all_noc
+
+```
+
+```{r}
+summary(m_all_noc)
+```
+
+```{r}
+m_all <- regsubsets(medals ~ sex  + age + height +  weight,
+                  data = olympics_ord, 
+                  nbest = 1, nvmax = 5, really.big = T)
+m_all
+
+```
+
+```{r}
+summary(m_all)
+```
+
+```{r}
+summary(m_all)$cp
 ```
