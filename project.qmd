@@ -116,7 +116,7 @@ olympics %>%
   filter(weight > 150)
 ```
 
-Boxplot of height by gender -\>
+Height vs Sex BoxPlots
 
 ```{r}
 ggplot(olympics , mapping = aes(x =height , y = sex )) + 
@@ -150,7 +150,16 @@ The expected log odds of someone achieving a gold medal if their sex is male is 
 
 ## Ordinal Regression
 
-## 
+```{r}
+ordMod <-
+  polr(factor(medal) ~ sex  + age + height +  weight + noc, data = olympics )
+tidy(ordMod) %>%
+  mutate(estimate = round(estimate , 9))
+```
+
+```{r}
+exp(coef(ordMod))
+```
 
 ## Why We Chose an Ordinal Model
 
