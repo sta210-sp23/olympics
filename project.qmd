@@ -211,3 +211,13 @@ summary(m_all)
 ```{r}
 summary(m_all)$cp
 ```
+
+Final Model
+
+```{r}
+ordMod_final <-
+  polr(factor(medals) ~ sex  + age + height , data = olympics_ord , method = "probit")
+tidy(ordMod_final) %>%
+  mutate(estimate = round(estimate , 9))
+
+```
