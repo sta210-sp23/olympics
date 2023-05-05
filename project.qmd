@@ -57,7 +57,7 @@ test <- olympics %>%
 
 ## Research Question
 
-**What are the most influential characteristics (between sex, age, height, weight, and country) when it comes to the Summer Olympics, and do these characteristics change over the course of a decade?**
+**What are the most influential characteristics (between sex, age, height, weight, and country) when it comes to predicting gold medals in the Summer Olympics, and do these characteristics change over the course of a decade?**
 
 We chose Olympics data from TidyTuesday's github repository (https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-07-27/readme.md). The data were collected by scraping www.sports-reference.com and was created in May 2018. The data contains 271,116 observations of 15 variables. The variables of interest in our research include sex, age, height, weight, noc (country), year, season, and medals (Gold, Silver, Bronze). Based on these variables, we will answer the question of what are the most influential variables that influence an athlete receiving a gold medal , and do these variables change over time. From the data set we will only observe the more recent Olympic games (including the years 2004, 2008, 2012, 2016), and we will analyze our research question through subsets of the data. There are many NA values corresponding to medals, and because this is our variable of interest we will drop all NA values corresponding to medals. After doing this we are left with a case study of 39,783 observations of 15 variables. The motivation behind this project is to analyze what athletes can do to better prepare for the Olympic games, and see which factors are more influential than others.
 
@@ -68,7 +68,8 @@ We chose Olympics data from TidyTuesday's github repository (https://github.com/
 ```{r}
 olympics04 %>%
   count(medal) %>%
-  mutate(per = n/sum(n))
+  mutate(per = n/sum(n)) %>%
+  ggplot()
 ```
 
 ```{r}
@@ -125,6 +126,31 @@ ggplot(olympics , mapping = aes(x =height , y = sex )) +
 ```
 
 Similar to the results that we saw in the boxplots comparing distributions of weights between men and women, we can see that men also have a higher median height than women who have completed in the Olympics.
+
+*We chose to use all years when analyzing the distribution of heights and weights* because over the course of our time frame (2004 - 2016) there have been many rule changes about allowed and not allowed substances, and analyzing these two variables through all of the years can give us a better idea of distributions.
+
+Now that we have analyzed the data and got some idea of the distribution of specific parameters of interest, we are interested in analyzing which variables are the biggest factor in predicting gold medals for Summer Olympic games, and whether or not these variables (and their influence) change over time.
+
+## Logistic Regression
+
+First we will fit a logistic regression model that predicts the probability of receiving a gold medal (for the purpose of this model, we will use the goldMedal? column that gives us a 1 if someone received a gold medal for their event, and gives us a 0 if someone did not receive a gold medal (they received either gold or silver) this is due to the characteristics of logistic regression and how it works best when predicting a binary outcome.)
+
+```{r}
+olympics_goldMedal <- olympics %>%
+  mutate(goldMedal = if_else(medal == "Gold", 1, 0)) 
+```
+
+```{r}
+ logit_mod <- glm(goldMedal ~ sex  + age + height +  weight + noc, data = olympics_goldMedal, family = "binomial") 
+   tidy(logit_mod) %>%
+     mutate(estimate = round(estimate, 9))
+```
+
+The expected log odds of someone achieving a gold medal if their sex is male is 0.0535 times higher than if someone is a female when holding all other variables constant. For every one year increase in age, the expected log odds of someone achieving a gold medal is expected to increase by .00164 when all other variables are held constant. For every one unit increase in height, we expect the logs odds of someone achieving a gold medal to increase by approximately 0.0020 when all other variables are held constant. . For every one unit increase in weight, we expect the log odds of someone achieving a gold medal to increase by approximately 0.00022 when all other variables are held constant. For each respective noc, the expected log odds of someone achieving a gold medal to \[increase or decrease\] by X when all other variables are held constant.
+
+## Ordinal Regression
+
+## 
 
 ## Why We Chose an Ordinal Model
 
